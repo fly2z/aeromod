@@ -55,11 +55,11 @@ func (a *App) IsSetupComplete() bool {
 }
 
 func (a *App) CompleteSetup(communityFolderPath, modFolderPath string) error {
-	if a.config.CommunityPath == "" {
+	if communityFolderPath == "" {
 		return fmt.Errorf("community folder path cannot be empty")
 	}
 
-	if a.config.ModStoragePath == "" {
+	if modFolderPath == "" {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
@@ -70,10 +70,14 @@ func (a *App) CompleteSetup(communityFolderPath, modFolderPath string) error {
 	}
 
 	a.config = &cfg
-	a.setupComplete = true
 
 	err = a.createMSFSClient()
-	return err
+	if err != nil {
+		return err
+	}
+
+	a.setupComplete = true
+	return nil
 }
 
 func (a *App) GetMods() []msfs.Mod {

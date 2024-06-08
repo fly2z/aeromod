@@ -43,7 +43,8 @@ func main() {
 			app,
 		},
 		Windows: &windows.Options{
-			DisablePinchZoom: true,
+			DisablePinchZoom:    true,
+			EnableSwipeGestures: false,
 		},
 	})
 
