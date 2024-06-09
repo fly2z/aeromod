@@ -4,19 +4,23 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/fly2z/aeromod/config"
 	"github.com/fly2z/aeromod/msfs"
 )
+
+const COMMUNITY_FOLDER_KEY = "community_path"
+const MOD_FOLDER_KEY = "mod_folder_path"
 
 // App struct
 type App struct {
 	ctx           context.Context
-	config        *Config
+	config        *config.Config
 	setupComplete bool
 	msfsClient    *msfs.Client
 }
 
 // NewApp creates a new App application struct
-func NewApp(config *Config) *App {
+func NewApp(config *config.Config) *App {
 	return &App{config: config}
 }
 
@@ -33,17 +37,19 @@ func (a *App) startup(ctx context.Context) {
 }
 
 func (a *App) createMSFSClient() error {
-	if a.config.CommunityPath == "" {
+	communityPath, exists := a.config.GetKey(COMMUNITY_FOLDER_KEY)
+	if !exists {
 		return fmt.Errorf("community folder path cannot be empty")
 	}
 
-	if a.config.ModStoragePath == "" {
+	modStoragePath, exists := a.config.GetKey(MOD_FOLDER_KEY)
+	if !exists {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
 	clientOptions := msfs.ClientOptions{
-		CommunityPath:    a.config.CommunityPath,
-		ModStorageFolder: a.config.ModStoragePath,
+		CommunityPath:    communityPath.(string),
+		ModStorageFolder: modStoragePath.(string),
 	}
 
 	a.msfsClient = msfs.NewClient(clientOptions)
@@ -63,15 +69,15 @@ func (a *App) CompleteSetup(communityFolderPath, modFolderPath string) error {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
-	cfg := Config{CommunityPath: communityFolderPath, ModStoragePath: modFolderPath}
-	err := WriteConfigFile(cfg)
-	if err != nil {
-		return err
+	if err := a.config.SetKey(COMMUNITY_FOLDER_KEY, communityFolderPath); err != nil {
+		return fmt.Errorf("error setting key: %v", err)
 	}
 
-	a.config = &cfg
+	if err := a.config.SetKey(MOD_FOLDER_KEY, modFolderPath); err != nil {
+		return fmt.Errorf("error setting key: %v", err)
+	}
 
-	err = a.createMSFSClient()
+	err := a.createMSFSClient()
 	if err != nil {
 		return err
 	}

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 
+	"github.com/fly2z/aeromod/config"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -14,20 +15,14 @@ import (
 var assets embed.FS
 
 func main() {
-	store, err := NewConfigStore()
+	config, err := config.NewConfig()
 	if err != nil {
-		fmt.Printf("could not initialize the config store: %v\n", err)
-		return
-	}
-
-	cfg, err := store.Config()
-	if err != nil {
-		fmt.Printf("could not retrieve the configuration: %v\n", err)
+		fmt.Printf("error initializing config: %v\n", err)
 		return
 	}
 
 	// Create an instance of the app structure
-	app := NewApp(&cfg)
+	app := NewApp(config)
 
 	// Create application with options
 	err = wails.Run(&options.App{
