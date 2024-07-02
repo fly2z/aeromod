@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"encoding/base64"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"os/exec"
@@ -83,4 +85,20 @@ func DeleteDir(folderPath string) error {
 	}
 
 	return nil
+}
+
+func Base64EncodeFile(filePath string) (string, error) {
+	f, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	data, err := io.ReadAll(f)
+	if err != nil {
+		return "", err
+	}
+
+	base64str := base64.StdEncoding.EncodeToString(data)
+	return base64str, nil
 }

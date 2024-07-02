@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { GetModManifest } from "@wailsjs/go/main/App";
+import { GetModManifest, GetModThumbnail } from "@wailsjs/go/main/App";
 import { msfs } from "@wailsjs/go/models";
 
 import {
@@ -12,6 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { base64Image } from "@/lib/utils";
 
 const NotFound = () => {
   return (
@@ -26,6 +27,7 @@ export default function ModPage() {
   if (!id) return <NotFound />;
 
   const [manifest, setManifest] = useState<msfs.PackageManifest>();
+  const [thumbnail, setThumbnail] = useState<string>();
 
   useEffect(() => {
     const fetchManifest = async () => {
@@ -33,7 +35,17 @@ export default function ModPage() {
       setManifest(m);
     };
 
+    const fetchThumbnail = async () => {
+      try {
+        const t = await GetModThumbnail(id);
+        setThumbnail(base64Image(t));
+      } catch (error) {
+        // mod doesnt have a thumbnail
+      }
+    };
+
     fetchManifest();
+    fetchThumbnail();
   }, []);
 
   if (!manifest) return <NotFound />;
@@ -55,18 +67,28 @@ export default function ModPage() {
       <div className="flex w-full items-center justify-between">
         <h1 className="text-xl">
           {manifest.title}{" "}
-          <span className="text-muted-foreground text-sm">
+          <span className="text-sm text-muted-foreground">
             {manifest.creator}
           </span>
         </h1>
         <div className="flex items-center gap-x-2">
-          <div className="text-muted-foreground px-3 py-2 font-mono font-light">
+          <div className="px-3 py-2 font-mono font-light text-muted-foreground">
             {manifest.package_version}
           </div>
-          <div className="bg-muted text-muted-foreground rounded border px-3 py-2 text-sm font-light">
+          <div className="rounded border bg-muted px-3 py-2 text-sm font-light text-muted-foreground">
             {manifest.content_type.toUpperCase()}
           </div>
         </div>
+      </div>
+
+      <div className="h-[170px] w-[412px]">
+        {thumbnail ? (
+          <img src={thumbnail} className="h-full w-full" alt="thumbnail" />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
+            No Thumbnail
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,9 @@
 package msfs
 
 import (
+	"errors"
+	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/fly2z/aeromod/utils"
@@ -71,4 +74,14 @@ func (c *Client) DisableMod(modName string) error {
 func (c *Client) IsModEnabled(modName string) (bool, error) {
 	modLink := filepath.Join(c.CommunityPath, modName)
 	return utils.IsJunction(modLink)
+}
+
+func (c *Client) GetModThumbnailBase64(modName string) (string, error) {
+	modPath := filepath.Join(c.CommunityPath, modName)
+	thumbnailPath := filepath.Join(modPath, "ContentInfo", modName, "Thumbnail.jpg")
+	if _, err := os.Stat(thumbnailPath); errors.Is(err, os.ErrNotExist) {
+		return "", fmt.Errorf("mod: %s, doesnt have a thumbnail", modName)
+	}
+
+	return utils.Base64EncodeFile(thumbnailPath)
 }

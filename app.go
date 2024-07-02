@@ -154,3 +154,7 @@ func (a *App) OpenDirectoryDialog(title string) (string, error) {
 
 	return dirPath, err
 }
+
+func (a *App) GetModThumbnail(modName string) (string, error) {
+	return a.msfsClient.GetModThumbnailBase64(modName)
+}
