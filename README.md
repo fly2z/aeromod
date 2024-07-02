@@ -13,7 +13,7 @@ An external mod manager for the Microsoft Flight Simulator.
     <img alt="wails" src="https://img.shields.io/badge/backend-wails-C23C36"/>
   </a>
   <a href="https://react.dev/">
-    <img alt="wails" src="https://img.shields.io/badge/frontend-react-36789A"/>
+    <img alt="react" src="https://img.shields.io/badge/frontend-react-36789A"/>
   </a>
 </p>
 
@@ -45,15 +45,17 @@ AeroMod is Windows-only.
 - Mod grouping ability.
 - Checking version conflicts.
 
-#### Enviroment
+## Environment Setup
 
 - [Go](https://go.dev/doc/install)
 - [Node](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs)
 - [Wails](https://wails.io/docs/next/gettingstarted/installation)
 
-> As AeroMod is mainly developed based on the Wails framework, the environment can be installed following the [installation tutorial of Wails](https://wails.io/docs/next/gettingstarted/installation).
+> As AeroMod is primarily developed using the Wails framework, the environment can be installed following the [installation tutorial of Wails](https://wails.io/docs/next/gettingstarted/installation).
 
-```
+### Installation
+
+```bash
 git clone https://github.com/fly2z/aeromod.git
 cd aeromod
 wails dev

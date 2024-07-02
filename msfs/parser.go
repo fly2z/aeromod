@@ -7,13 +7,6 @@ import (
 	"path"
 )
 
-type ContentType int
-
-const (
-	SCENERY ContentType = iota
-	AIRCRAFT
-)
-
 type PackageManifest struct {
 	ContentType        string        `json:"content_type"`
 	Title              string        `json:"title"`
@@ -25,8 +18,8 @@ type PackageManifest struct {
 	Dependencies       []interface{} `json:"dependencies"`
 }
 
-func (m *Client) ParsePackageManifest(packageName string) (*PackageManifest, error) {
-	manifestFile, err := os.Open(path.Join(m.ModStorageFolder, packageName, "manifest.json"))
+func (c *Client) ParsePackageManifest(packageName string) (*PackageManifest, error) {
+	manifestFile, err := os.Open(path.Join(c.ModStorageFolder, packageName, "manifest.json"))
 	if err != nil {
 		return nil, err
 	}

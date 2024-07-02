@@ -1,6 +1,10 @@
 package msfs
 
-import "github.com/fly2z/aeromod/utils"
+import (
+	"path/filepath"
+
+	"github.com/fly2z/aeromod/utils"
+)
 
 type Client struct {
 	CommunityPath    string
@@ -19,8 +23,8 @@ func NewClient(options ClientOptions) *Client {
 	}
 }
 
-func (m *Client) GetModNames() []string {
-	folders, err := utils.Readdir(m.ModStorageFolder)
+func (c *Client) GetModNames() []string {
+	folders, err := utils.Readdir(c.ModStorageFolder)
 	if err != nil {
 		return nil
 	}
@@ -31,4 +35,40 @@ func (m *Client) GetModNames() []string {
 	}
 
 	return mods
+}
+
+func (c *Client) EnableMod(modName string) error {
+	modSource := filepath.Join(c.ModStorageFolder, modName)
+	modLink := filepath.Join(c.CommunityPath, modName)
+	enabled, err := utils.IsJunction(modLink)
+	if err != nil {
+		return err
+	}
+
+	// mod is already enabled
+	if enabled {
+		return nil
+	}
+
+	return utils.CreateJunction(modSource, modLink)
+}
+
+func (c *Client) DisableMod(modName string) error {
+	modLink := filepath.Join(c.CommunityPath, modName)
+	enabled, err := utils.IsJunction(modLink)
+	if err != nil {
+		return err
+	}
+
+	// mod is already disabled
+	if !enabled {
+		return nil
+	}
+
+	return utils.RemoveJunction(modLink)
+}
+
+func (c *Client) IsModEnabled(modName string) (bool, error) {
+	modLink := filepath.Join(c.CommunityPath, modName)
+	return utils.IsJunction(modLink)
 }

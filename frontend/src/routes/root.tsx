@@ -13,7 +13,6 @@ export default function RootLayout() {
   useEffect(() => {
     const checkSetup = async () => {
       const isSetupComplete = await IsSetupComplete();
-      console.log(isSetupComplete);
       setSetupStatus(isSetupComplete ? "COMPLETE" : "NOTCOMPLETE");
     };
 

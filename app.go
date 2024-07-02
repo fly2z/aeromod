@@ -6,6 +6,7 @@ import (
 
 	"github.com/fly2z/aeromod/config"
 	"github.com/fly2z/aeromod/msfs"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 const COMMUNITY_FOLDER_KEY = "community_path"
@@ -31,9 +32,11 @@ func (a *App) startup(ctx context.Context) {
 
 	// initialize msfs client and check if setup is complete
 	err := a.createMSFSClient()
-	if err == nil {
-		a.setupComplete = true
+	if err != nil {
+		return
 	}
+
+	a.setupComplete = true
 }
 
 func (a *App) createMSFSClient() error {
@@ -60,20 +63,25 @@ func (a *App) IsSetupComplete() bool {
 	return a.setupComplete
 }
 
-func (a *App) CompleteSetup(communityFolderPath, modFolderPath string) error {
-	if communityFolderPath == "" {
-		return fmt.Errorf("community folder path cannot be empty")
-	}
-
-	if modFolderPath == "" {
+func (a *App) CompleteSetup(modDirPath string) error {
+	if modDirPath == "" {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
-	if err := a.config.SetKey(COMMUNITY_FOLDER_KEY, communityFolderPath); err != nil {
+	communityDirPath, found := msfs.FindSimCommunityFolder()
+	if !found {
+		return fmt.Errorf("failed to find community directory")
+	}
+
+	if communityDirPath == "" {
+		return fmt.Errorf("failed to find community directory")
+	}
+
+	if err := a.config.SetKey(COMMUNITY_FOLDER_KEY, communityDirPath); err != nil {
 		return fmt.Errorf("error setting key: %v", err)
 	}
 
-	if err := a.config.SetKey(MOD_FOLDER_KEY, modFolderPath); err != nil {
+	if err := a.config.SetKey(MOD_FOLDER_KEY, modDirPath); err != nil {
 		return fmt.Errorf("error setting key: %v", err)
 	}
 
@@ -137,4 +145,12 @@ func (a *App) DisableMod(modName string) error {
 
 	err := a.msfsClient.DisableMod(modName)
 	return err
+}
+
+func (a *App) OpenDirectoryDialog(title string) (string, error) {
+	dirPath, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: title,
+	})
+
+	return dirPath, err
 }

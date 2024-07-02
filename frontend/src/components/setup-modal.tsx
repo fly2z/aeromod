@@ -1,113 +1,80 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { CompleteSetup } from "@wailsjs/go/main/App";
-
-const windowsPathFormat = z.string().refine(
-  (value) => {
-    // Check if it's a Windows path without a trailing slash
-    return /^[a-zA-Z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*$/.test(
-      value
-    );
-  },
-  {
-    message: "Invalid path format.",
-  }
-);
-
-const formSchema = z.object({
-  communityPath: windowsPathFormat,
-  modFolderPath: windowsPathFormat,
-});
+import { CompleteSetup, OpenDirectoryDialog } from "@wailsjs/go/main/App";
+import { FolderOpen } from "lucide-react";
+import { useState } from "react";
+import { Button } from "./ui/button";
 
 export default function SetupDialog() {
   const navigate = useNavigate();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      communityPath: "",
-      modFolderPath: "",
-    },
-  });
+  const [modDir, setModDir] = useState<string>();
+  const selected = modDir && modDir !== "";
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    CompleteSetup(values.communityPath, values.modFolderPath)
-      .catch(() => toast.error("Failed to complete setup."))
-      .then(() => navigate(0));
-  }
+  const selectModDir = async () => {
+    try {
+      const path = await OpenDirectoryDialog("Select Mod Folder");
+      if (path != "") {
+        setModDir(path);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const complete = async () => {
+    if (!selected) return;
+
+    try {
+      await CompleteSetup(modDir);
+      toast.success("Setup complete!");
+      navigate(0);
+    } catch (error) {
+      toast.error("Failed to complete setup. Please try again.");
+      console.log(error);
+    }
+  };
 
   return (
-    <Dialog open={true}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Set AeroMod up</DialogTitle>
-          <DialogDescription>
-            Configure your mod and community folder paths.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-            <FormField
-              control={form.control}
-              name="communityPath"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>MSFS Community Folder Path</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is where MSFS loads the mods from.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="modFolderPath"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mods Folder Path</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is where the mod files are stored.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <Button type="submit">Continue</Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <div className="flex h-screen w-full items-center">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-y-6 px-4">
+        <div>
+          <h1 className="text-2xl font-bold">Welcome to AeroMod</h1>
+          <p className="text-muted-foreground">
+            Please select the folder where your mods will be stored.
+          </p>
+        </div>
+        <div className="flex flex-col gap-y-3">
+          {!modDir ? (
+            <div
+              className="flex h-12 w-full cursor-pointer items-center justify-center gap-x-3 rounded-md bg-blue-500 transition-colors hover:bg-blue-600"
+              onClick={selectModDir}
+            >
+              <FolderOpen className="h-6 w-6" />
+              <span className="text-sm font-semibold">Select Folder</span>
+            </div>
+          ) : (
+            <div
+              className="flex h-12 w-full cursor-pointer items-center justify-center gap-x-3 rounded-md bg-blue-500 transition-colors hover:bg-blue-600"
+              onClick={selectModDir}
+            >
+              <FolderOpen className="h-6 w-6" />
+              <span className="text-sm font-semibold">Change Folder</span>
+            </div>
+          )}
+          <div className="flex w-full">
+            <Button
+              className="h-12 w-full rounded-md"
+              variant="outline"
+              disabled={!selected}
+              onClick={complete}
+            >
+              Continue
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
