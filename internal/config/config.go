@@ -16,8 +16,8 @@ type Config struct {
 	path   string
 }
 
-func NewConfig() (*Config, error) {
-	path, err := xdg.ConfigFile("AeroMod/config.json")
+func NewConfig(dir string) (*Config, error) {
+	path, err := xdg.ConfigFile(dir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get config file path: %w", err)
 	}
@@ -27,7 +27,7 @@ func NewConfig() (*Config, error) {
 		path:   path,
 	}
 
-	// check if the config file exists, and create it if it doesn't
+	// create the config file if it does not exist
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		if err := cfg.save(); err != nil {
 			return nil, fmt.Errorf("failed to create config file: %w", err)
@@ -46,7 +46,7 @@ func (c *Config) load() error {
 	defer c.mu.Unlock()
 
 	if _, err := os.Stat(c.path); os.IsNotExist(err) {
-		return nil // No config file exists yet
+		return nil // config file does not exist
 	}
 
 	data, err := os.ReadFile(c.path)

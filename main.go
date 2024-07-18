@@ -4,7 +4,7 @@ import (
 	"embed"
 	"fmt"
 
-	"github.com/fly2z/aeromod/config"
+	"github.com/fly2z/aeromod/internal/config"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -15,7 +15,7 @@ import (
 var assets embed.FS
 
 func main() {
-	config, err := config.NewConfig()
+	config, err := config.NewConfig("AeroMod/config.json")
 	if err != nil {
 		fmt.Printf("error initializing config: %v\n", err)
 		return

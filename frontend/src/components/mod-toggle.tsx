@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { EnableMod, DisableMod } from "@wailsjs/go/main/App";
 import { toast } from "sonner";
+import { EnableMod, DisableMod } from "@wailsjs/go/main/App";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type ModToggleProps = {
   modId: string;
   enabled?: boolean;
 };
 
-export default function MSFSModeToggle({
-  modId,
-  enabled = true,
-}: ModToggleProps) {
+export default function ModToggle({ modId, enabled = true }: ModToggleProps) {
   const [checked, setChecked] = useState<boolean>(enabled);
 
   const onChange = async (event: boolean | "indeterminate") => {

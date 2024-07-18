@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/fly2z/aeromod/config"
-	"github.com/fly2z/aeromod/msfs"
+	"github.com/fly2z/aeromod/internal/config"
+	"github.com/fly2z/aeromod/internal/msfs"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 

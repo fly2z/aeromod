@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { toast } from "sonner";
-
 import { CompleteSetup, OpenDirectoryDialog } from "@wailsjs/go/main/App";
 import { FolderOpen } from "lucide-react";
-import { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function SetupDialog() {
   const navigate = useNavigate();
