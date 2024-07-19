@@ -14,7 +14,7 @@
     !define INFO_PRODUCTNAME "AeroMod"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "0.3.0"
+    !define INFO_PRODUCTVERSION "0.4.0"
 !endif
 !ifndef INFO_COPYRIGHT
     !define INFO_COPYRIGHT "Copyright........."

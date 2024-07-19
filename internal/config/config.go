@@ -1,92 +1,72 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
-	"sync"
 
 	"github.com/adrg/xdg"
+	"github.com/knadh/koanf/parsers/toml"
+	"github.com/knadh/koanf/providers/file"
+	"github.com/knadh/koanf/v2"
 )
 
-type Config struct {
-	mu     sync.RWMutex
-	config map[string]interface{}
-	path   string
-}
+var (
+	k          = koanf.New(".")
+	parser     = toml.Parser()
+	configPath string
+)
 
-func NewConfig(dir string) (*Config, error) {
-	path, err := xdg.ConfigFile(dir)
+func Load(v interface{}) error {
+	var err error
+	configPath, err = xdg.ConfigFile("AeroMod/config.toml")
 	if err != nil {
-		return nil, fmt.Errorf("failed to get config file path: %w", err)
+		return fmt.Errorf("failed to get config file path: %w", err)
 	}
 
-	cfg := &Config{
-		config: make(map[string]interface{}),
-		path:   path,
-	}
-
-	// create the config file if it does not exist
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		if err := cfg.save(); err != nil {
-			return nil, fmt.Errorf("failed to create config file: %w", err)
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		_, err := os.Create(configPath)
+		if err != nil {
+			return err
 		}
 	}
 
-	if err := cfg.load(); err != nil {
-		return nil, err
+	if err := k.Load(file.Provider(configPath), parser); err != nil {
+		return err
 	}
 
-	return cfg, nil
-}
-
-func (c *Config) load() error {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	if _, err := os.Stat(c.path); os.IsNotExist(err) {
-		return nil // config file does not exist
-	}
-
-	data, err := os.ReadFile(c.path)
-	if err != nil {
-		return fmt.Errorf("failed to read config file: %w", err)
-	}
-
-	if err := json.Unmarshal(data, &c.config); err != nil {
-		return fmt.Errorf("failed to unmarshal config file: %w", err)
+	if err := k.Unmarshal("", &v); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func (c *Config) save() error {
-	data, err := json.MarshalIndent(c.config, "", "  ")
+func Get(key string) interface{} {
+	return k.Get(key)
+}
+
+func Set(key string, val interface{}) error {
+	if err := k.Set(key, val); err != nil {
+		return fmt.Errorf("failed to set key %s: %w", key, err)
+	}
+
+	if err := save(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func save() error {
+	tomlData, err := k.Marshal(parser)
 	if err != nil {
-		return fmt.Errorf("failed to marshal config: %w", err)
+		return fmt.Errorf("failed to marshal config to TOML: %w", err)
 	}
 
-	if err := os.MkdirAll(filepath.Dir(c.path), os.ModePerm); err != nil {
-		return fmt.Errorf("failed to create config directory: %w", err)
-	}
-
-	if err := os.WriteFile(c.path, data, 0644); err != nil {
+	err = os.WriteFile(configPath, tomlData, 0644)
+	if err != nil {
 		return fmt.Errorf("failed to write config file: %w", err)
 	}
 
 	return nil
-}
-
-func (c *Config) SetKey(key string, value interface{}) error {
-	c.mu.Lock()
-	c.config[key] = value
-	c.mu.Unlock()
-
-	return c.save()
-}
-
-func (c *Config) GetKey(key string) (interface{}, bool) {
-	value, exists := c.config[key]
-	return value, exists
 }

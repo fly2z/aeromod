@@ -2,7 +2,7 @@ package main
 
 import (
 	"embed"
-	"fmt"
+	"log"
 
 	"github.com/fly2z/aeromod/internal/config"
 	"github.com/wailsapp/wails/v2"
@@ -15,14 +15,14 @@ import (
 var assets embed.FS
 
 func main() {
-	config, err := config.NewConfig("AeroMod/config.json")
+	var conf AppConfig
+	err := config.Load(&conf)
 	if err != nil {
-		fmt.Printf("error initializing config: %v\n", err)
-		return
+		log.Fatalf("failed to load config: %v\n", err)
 	}
 
 	// Create an instance of the app structure
-	app := NewApp(config)
+	app := NewApp(&conf)
 
 	// Create application with options
 	err = wails.Run(&options.App{

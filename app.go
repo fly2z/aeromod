@@ -11,17 +11,21 @@ import (
 )
 
 const (
-	MOD_FOLDER = "MOD_FOLDER"
+	MOD_FOLDER = "mod_folder"
 )
+
+type AppConfig struct {
+	ModFolder string `koanf:"mod_folder"`
+}
 
 type App struct {
 	ctx           context.Context
-	config        *config.Config
+	config        *AppConfig
 	setupComplete bool
 	msfsClient    *msfs.Client
 }
 
-func NewApp(config *config.Config) *App {
+func NewApp(config *AppConfig) *App {
 	return &App{config: config}
 }
 
@@ -36,13 +40,22 @@ func (a *App) startup(ctx context.Context) {
 	a.setupComplete = true
 }
 
+func (a *App) reloadConfig() error {
+	err := config.Load(a.config)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (a *App) createMSFSClient() error {
-	modFolder, exists := a.config.GetKey(MOD_FOLDER)
-	if !exists {
+	modFolder := a.config.ModFolder
+	if modFolder == "" {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
-	a.msfsClient = msfs.NewClient(modFolder.(string))
+	a.msfsClient = msfs.NewClient(modFolder)
 	return nil
 }
 
@@ -59,8 +72,12 @@ func (a *App) CompleteSetup(modDirPath string) error {
 		return fmt.Errorf("failed to find community directory")
 	}
 
-	if err := a.config.SetKey(MOD_FOLDER, modDirPath); err != nil {
-		return fmt.Errorf("error setting key: %v", err)
+	if err := config.Set(MOD_FOLDER, modDirPath); err != nil {
+		return err
+	}
+
+	if err := a.reloadConfig(); err != nil {
+		return fmt.Errorf("failed to reload config")
 	}
 
 	if err := a.createMSFSClient(); err != nil {
