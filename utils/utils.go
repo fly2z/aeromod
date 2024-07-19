@@ -37,7 +37,7 @@ func RemoveJunction(linkName string) error {
 	}
 
 	// Delete the empty folder
-	if err := DeleteDir(linkName); err != nil {
+	if err := Rmdir(linkName); err != nil {
 		return err
 	}
 
@@ -72,8 +72,8 @@ func Readdir(path string) ([]fs.DirEntry, error) {
 	return entries, nil
 }
 
-// DeleteDir deletes the specified directory and its contents
-func DeleteDir(folderPath string) error {
+// Rmdir deletes the specified directory and its contents
+func Rmdir(folderPath string) error {
 	if _, err := os.Lstat(folderPath); os.IsNotExist(err) {
 		return nil
 	} else if err != nil {

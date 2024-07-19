@@ -38,7 +38,7 @@ AeroMod is Windows-only.
 - Enable/Disable mods.
 - Display mod details such as type, author, and version.
 
-![](./screenshots/main.png)
+![](./.github/screenshot.png)
 
 ## Roadmap
 

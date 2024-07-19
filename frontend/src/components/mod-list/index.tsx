@@ -3,7 +3,8 @@ import { Loader2, MoreHorizontal } from "lucide-react";
 import { msfs } from "@wailsjs/go/models";
 
 import { Button } from "@/components/ui/button";
-import ModToggle from "@/components/mod-toggle";
+import ModToggle from "./toggle";
+import ModActions from "./actions";
 
 type ModListProps = {
   mods?: msfs.Mod[];
@@ -39,9 +40,11 @@ export default function ModList({ mods = [], loading = false }: ModListProps) {
               <p className="underline">{m.name}</p>
             </Link>
           </div>
-          <Button variant="outline" size="icon">
-            <MoreHorizontal className="h-5 w-5" />
-          </Button>
+          <ModActions>
+            <Button variant="outline" size="icon">
+              <MoreHorizontal className="h-5 w-5" />
+            </Button>
+          </ModActions>
         </div>
       ))}
     </div>

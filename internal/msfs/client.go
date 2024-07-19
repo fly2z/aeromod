@@ -77,6 +77,15 @@ func (c *Client) DisableMod(modName string) error {
 	return utils.RemoveJunction(modLink)
 }
 
+func (c *Client) UninstallMod(name string) error {
+	if err := c.DisableMod(name); err != nil {
+		return err
+	}
+
+	modPath := filepath.Join(c.config.communityFolder, name)
+	return utils.Rmdir(modPath)
+}
+
 func (c *Client) IsModEnabled(modName string) (bool, error) {
 	modLink := filepath.Join(c.config.communityFolder, modName)
 	return utils.IsJunction(modLink)
