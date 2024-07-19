@@ -1,17 +1,29 @@
 import { Link } from "react-router-dom";
+import { Loader2, MoreHorizontal } from "lucide-react";
 import { msfs } from "@wailsjs/go/models";
-import { MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import ModToggle from "@/components/mod-toggle";
 
 type ModListProps = {
   mods?: msfs.Mod[];
+  loading?: boolean;
 };
 
-export default function ModList({ mods }: ModListProps) {
-  if (!mods) {
-    return <div>No mod found.</div>;
+export default function ModList({ mods = [], loading = false }: ModListProps) {
+  if (loading)
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+
+  if (mods.length < 1) {
+    return (
+      <div className="flex h-full w-full items-center justify-center text-2xl font-semibold">
+        No mod found
+      </div>
+    );
   }
 
   return (
