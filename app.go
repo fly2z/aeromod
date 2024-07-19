@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/fly2z/aeromod/internal/config"
 	"github.com/fly2z/aeromod/internal/msfs"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const COMMUNITY_FOLDER_KEY = "community_path"
-const MOD_FOLDER_KEY = "mod_folder_path"
+const (
+	MOD_FOLDER = "MOD_FOLDER"
+)
 
-// App struct
 type App struct {
 	ctx           context.Context
 	config        *config.Config
@@ -20,17 +21,13 @@ type App struct {
 	msfsClient    *msfs.Client
 }
 
-// NewApp creates a new App application struct
 func NewApp(config *config.Config) *App {
 	return &App{config: config}
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
-	// initialize msfs client and check if setup is complete
 	err := a.createMSFSClient()
 	if err != nil {
 		return
@@ -40,22 +37,12 @@ func (a *App) startup(ctx context.Context) {
 }
 
 func (a *App) createMSFSClient() error {
-	communityPath, exists := a.config.GetKey(COMMUNITY_FOLDER_KEY)
-	if !exists {
-		return fmt.Errorf("community folder path cannot be empty")
-	}
-
-	modStoragePath, exists := a.config.GetKey(MOD_FOLDER_KEY)
+	modFolder, exists := a.config.GetKey(MOD_FOLDER)
 	if !exists {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
-	clientOptions := msfs.ClientOptions{
-		CommunityPath:    communityPath.(string),
-		ModStorageFolder: modStoragePath.(string),
-	}
-
-	a.msfsClient = msfs.NewClient(clientOptions)
+	a.msfsClient = msfs.NewClient(modFolder.(string))
 	return nil
 }
 
@@ -68,25 +55,15 @@ func (a *App) CompleteSetup(modDirPath string) error {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
-	communityDirPath, found := msfs.FindSimCommunityFolder()
-	if !found {
+	if _, found := msfs.FindSimCommunityFolder(); !found {
 		return fmt.Errorf("failed to find community directory")
 	}
 
-	if communityDirPath == "" {
-		return fmt.Errorf("failed to find community directory")
-	}
-
-	if err := a.config.SetKey(COMMUNITY_FOLDER_KEY, communityDirPath); err != nil {
+	if err := a.config.SetKey(MOD_FOLDER, modDirPath); err != nil {
 		return fmt.Errorf("error setting key: %v", err)
 	}
 
-	if err := a.config.SetKey(MOD_FOLDER_KEY, modDirPath); err != nil {
-		return fmt.Errorf("error setting key: %v", err)
-	}
-
-	err := a.createMSFSClient()
-	if err != nil {
+	if err := a.createMSFSClient(); err != nil {
 		return err
 	}
 
@@ -100,12 +77,12 @@ func (a *App) GetMods() []msfs.Mod {
 	}
 
 	var mods []msfs.Mod
-
 	modNames := a.msfsClient.GetModNames()
 
 	for _, name := range modNames {
 		enabled, err := a.msfsClient.IsModEnabled(name)
 		if err != nil {
+			log.Printf("failed to check mod status: %v\n", err)
 			mods = append(mods, msfs.Mod{Name: name, Enabled: false})
 			continue
 		}
@@ -123,6 +100,7 @@ func (a *App) GetModManifest(packageName string) msfs.PackageManifest {
 
 	manifest, err := a.msfsClient.ParsePackageManifest(packageName)
 	if err != nil {
+		log.Printf("failed to parse package manifest: %v\n", err)
 		return msfs.PackageManifest{}
 	}
 
@@ -134,8 +112,11 @@ func (a *App) EnableMod(modName string) error {
 		return fmt.Errorf("msfs client not initialized")
 	}
 
-	err := a.msfsClient.EnableMod(modName)
-	return err
+	if err := a.msfsClient.EnableMod(modName); err != nil {
+		return fmt.Errorf("error enabling mod: %w", err)
+	}
+
+	return nil
 }
 
 func (a *App) DisableMod(modName string) error {
@@ -143,8 +124,11 @@ func (a *App) DisableMod(modName string) error {
 		return fmt.Errorf("msfs client not initialized")
 	}
 
-	err := a.msfsClient.DisableMod(modName)
-	return err
+	if err := a.msfsClient.DisableMod(modName); err != nil {
+		return fmt.Errorf("error disabling mod: %w", err)
+	}
+
+	return nil
 }
 
 func (a *App) OpenDirectoryDialog(title string) (string, error) {
@@ -152,9 +136,22 @@ func (a *App) OpenDirectoryDialog(title string) (string, error) {
 		Title: title,
 	})
 
-	return dirPath, err
+	if err != nil {
+		return "", fmt.Errorf("failed to open directory dialog: %w", err)
+	}
+
+	return dirPath, nil
 }
 
 func (a *App) GetModThumbnail(modName string) (string, error) {
-	return a.msfsClient.GetModThumbnailBase64(modName)
+	if a.msfsClient == nil {
+		return "", fmt.Errorf("msfs client not initialized")
+	}
+
+	thumbnail, err := a.msfsClient.GetModThumbnailBase64(modName)
+	if err != nil {
+		return "", fmt.Errorf("failed to get mod thumbnail: %w", err)
+	}
+
+	return thumbnail, nil
 }

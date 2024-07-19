@@ -10,24 +10,30 @@ import (
 )
 
 type Client struct {
-	CommunityPath    string
-	ModStorageFolder string
+	config *ClientConfig
 }
 
-type ClientOptions struct {
-	CommunityPath    string
-	ModStorageFolder string
+type ClientConfig struct {
+	communityFolder string
+	modFolder       string
 }
 
-func NewClient(options ClientOptions) *Client {
+func NewClient(modFolder string) *Client {
+	communityFolder, found := FindSimCommunityFolder()
+	if !found {
+		return nil
+	}
+
 	return &Client{
-		CommunityPath:    options.CommunityPath,
-		ModStorageFolder: options.ModStorageFolder,
+		config: &ClientConfig{
+			communityFolder: communityFolder,
+			modFolder:       modFolder,
+		},
 	}
 }
 
 func (c *Client) GetModNames() []string {
-	folders, err := utils.Readdir(c.ModStorageFolder)
+	folders, err := utils.Readdir(c.config.modFolder)
 	if err != nil {
 		return nil
 	}
@@ -41,8 +47,8 @@ func (c *Client) GetModNames() []string {
 }
 
 func (c *Client) EnableMod(modName string) error {
-	modSource := filepath.Join(c.ModStorageFolder, modName)
-	modLink := filepath.Join(c.CommunityPath, modName)
+	modSource := filepath.Join(c.config.modFolder, modName)
+	modLink := filepath.Join(c.config.communityFolder, modName)
 	enabled, err := utils.IsJunction(modLink)
 	if err != nil {
 		return err
@@ -57,7 +63,7 @@ func (c *Client) EnableMod(modName string) error {
 }
 
 func (c *Client) DisableMod(modName string) error {
-	modLink := filepath.Join(c.CommunityPath, modName)
+	modLink := filepath.Join(c.config.communityFolder, modName)
 	enabled, err := utils.IsJunction(modLink)
 	if err != nil {
 		return err
@@ -72,12 +78,12 @@ func (c *Client) DisableMod(modName string) error {
 }
 
 func (c *Client) IsModEnabled(modName string) (bool, error) {
-	modLink := filepath.Join(c.CommunityPath, modName)
+	modLink := filepath.Join(c.config.communityFolder, modName)
 	return utils.IsJunction(modLink)
 }
 
 func (c *Client) GetModThumbnailBase64(modName string) (string, error) {
-	modPath := filepath.Join(c.CommunityPath, modName)
+	modPath := filepath.Join(c.config.communityFolder, modName)
 	thumbnailPath := filepath.Join(modPath, "ContentInfo", modName, "Thumbnail.jpg")
 	if _, err := os.Stat(thumbnailPath); errors.Is(err, os.ErrNotExist) {
 		return "", fmt.Errorf("mod: %s, doesnt have a thumbnail", modName)

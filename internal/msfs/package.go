@@ -19,7 +19,7 @@ type PackageManifest struct {
 }
 
 func (c *Client) ParsePackageManifest(packageName string) (*PackageManifest, error) {
-	manifestFile, err := os.Open(path.Join(c.ModStorageFolder, packageName, "manifest.json"))
+	manifestFile, err := os.Open(path.Join(c.config.modFolder, packageName, "manifest.json"))
 	if err != nil {
 		return nil, err
 	}
