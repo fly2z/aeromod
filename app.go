@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"path/filepath"
+	"strings"
 
 	"github.com/fly2z/aeromod/internal/config"
 	"github.com/fly2z/aeromod/internal/msfs"
+	"github.com/fly2z/aeromod/utils"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -171,4 +174,58 @@ func (a *App) GetModThumbnail(modName string) (string, error) {
 	}
 
 	return thumbnail, nil
+}
+
+func (a *App) InstallMod() (bool, error) {
+	archive, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Choose Mod",
+	})
+
+	if err != nil {
+		return false, fmt.Errorf("failed to open directory dialog: %w", err)
+	}
+
+	if archive == "" {
+		return false, nil
+	}
+
+	ext := filepath.Ext(archive)
+	if ext != ".zip" {
+		return false, fmt.Errorf("unsupported archive format")
+	}
+
+	archiveDest := strings.TrimSuffix(archive, ext)
+
+	err = utils.Unzip(archive, archiveDest)
+	if err != nil {
+		return false, err
+	}
+
+	defer func() {
+		err := utils.Rmdir(archiveDest)
+		if err != nil {
+			log.Printf("failed to cleanup extracted archive: %s\n", filepath.Base(archiveDest))
+		}
+	}()
+
+	mods, err := msfs.FindMods(archiveDest)
+	if err != nil {
+		return false, fmt.Errorf("failed to find mods: %w", err)
+	}
+
+	fmt.Printf("\n\n\n\nFOUND %d MODS\n\n\n\n", len(mods))
+
+	if len(mods) < 1 {
+		return false, nil
+	}
+
+	for _, m := range mods {
+		err := utils.CopyDir(m, filepath.Join(a.config.ModFolder, filepath.Base(m)))
+		if err != nil {
+			log.Printf("failed to move mod: %v\n", err)
+			continue
+		}
+	}
+
+	return true, nil
 }

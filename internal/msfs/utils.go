@@ -1,6 +1,7 @@
 package msfs
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -66,4 +67,41 @@ func FindSimCommunityFolder() (string, bool) {
 		return "", false
 	}
 	return filepath.Join(pkgDir, "Community"), true
+}
+
+func FindMods(path string) ([]string, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+	if !info.IsDir() {
+		return nil, fmt.Errorf("provided path is not a directory")
+	}
+
+	var foundMods []string
+
+	err = filepath.Walk(path, func(root string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// skip non-directory entries
+		if !info.IsDir() {
+			return nil
+		}
+
+		// check if directory contains a manifest.json file
+		manifestPath := filepath.Join(root, "manifest.json")
+		if _, err := os.Stat(manifestPath); err == nil {
+			foundMods = append(foundMods, root)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return foundMods, nil
 }
