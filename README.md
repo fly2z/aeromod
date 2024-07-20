@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-An external mod manager for the Microsoft Flight Simulator.
+An external mod manager for Microsoft Flight Simulator.
 </p>
 
 <p align="center">
@@ -29,21 +29,25 @@ An external mod manager for the Microsoft Flight Simulator.
 
 ## About
 
-AeroMod is a tool to manage Microsoft Flight Simulator mods by enabling and disabling them using directory junctions on Windows. This allows large mods to be managed efficiently without physically moving files.
+AeroMod is a tool designed to efficiently manage Microsoft Flight Simulator mods. With AeroMod, you can easily enable, disable, install, and uninstall mods without physically moving files. AeroMod is Windows-only.
 
-AeroMod is Windows-only.
+![](./.github/screenshot.png)
 
 ## Features
 
 - Enable/Disable mods.
+- Install/Uninstall mods.
+- Search for mods.
 - Display mod details such as type, author, and version.
-
-![](./.github/screenshot.png)
 
 ## Roadmap
 
 - Mod grouping ability.
 - Checking version conflicts.
+- Installing mods from remote URLs.
+- Caching mods for faster load times.
+- Customizable layout.
+- Categories for searching mods efficiently (e.g., SCENERY, LIVERY).
 
 ## Environment Setup
 
@@ -51,7 +55,7 @@ AeroMod is Windows-only.
 - [Node](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs)
 - [Wails](https://wails.io/docs/next/gettingstarted/installation)
 
-> As AeroMod is primarily developed using the Wails framework, the environment can be installed following the [installation tutorial of Wails](https://wails.io/docs/next/gettingstarted/installation).
+> As AeroMod is primarily developed using the Wails framework, the environment can be set up following the [installation tutorial of Wails](https://wails.io/docs/gettingstarted/installation).
 
 ### Installation
 
