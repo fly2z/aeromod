@@ -14,21 +14,18 @@ import (
 )
 
 const (
-	MOD_FOLDER = "mod_folder"
+	CONFIG_MOD_FOLDER        = "mod_folder"
+	CONFIG_ENABLE_ON_INSTALL = "enable_on_install"
 )
-
-type AppConfig struct {
-	ModFolder string `koanf:"mod_folder"`
-}
 
 type App struct {
 	ctx           context.Context
-	config        *AppConfig
+	config        *config.AppConfig
 	setupComplete bool
 	msfsClient    *msfs.Client
 }
 
-func NewApp(config *AppConfig) *App {
+func NewApp(config *config.AppConfig) *App {
 	return &App{config: config}
 }
 
@@ -75,7 +72,7 @@ func (a *App) CompleteSetup(modDirPath string) error {
 		return fmt.Errorf("failed to find community directory")
 	}
 
-	if err := config.Set(MOD_FOLDER, modDirPath); err != nil {
+	if err := config.Set(CONFIG_MOD_FOLDER, modDirPath); err != nil {
 		return err
 	}
 
@@ -220,10 +217,18 @@ func (a *App) InstallMod() (bool, error) {
 	}
 
 	for _, m := range mods {
-		err := utils.CopyDir(m, filepath.Join(a.config.ModFolder, filepath.Base(m)))
+		name := filepath.Base(m)
+		err := utils.CopyDir(m, filepath.Join(a.config.ModFolder, name))
 		if err != nil {
 			log.Printf("failed to move mod: %v\n", err)
 			continue
+		}
+
+		if a.config.EnableOnInstall {
+			err = a.EnableMod(name)
+			if err != nil {
+				log.Printf("failed to enable mod: %v\n", err)
+			}
 		}
 	}
 

@@ -7,6 +7,7 @@ toolchain go1.22.0
 require (
 	github.com/adrg/xdg v0.4.0
 	github.com/knadh/koanf/parsers/toml v0.1.0
+	github.com/knadh/koanf/providers/confmap v0.1.0
 	github.com/knadh/koanf/providers/file v1.0.0
 	github.com/knadh/koanf/v2 v2.1.1
 	github.com/wailsapp/wails/v2 v2.8.2

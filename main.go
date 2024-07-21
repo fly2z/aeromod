@@ -15,7 +15,7 @@ import (
 var assets embed.FS
 
 func main() {
-	var conf AppConfig
+	var conf config.AppConfig
 	err := config.Load(&conf)
 	if err != nil {
 		log.Fatalf("failed to load config: %v\n", err)

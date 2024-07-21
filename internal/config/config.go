@@ -2,13 +2,20 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/adrg/xdg"
 	"github.com/knadh/koanf/parsers/toml"
+	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
 )
+
+type AppConfig struct {
+	ModFolder       string `koanf:"mod_folder"`
+	EnableOnInstall bool   `koanf:"enable_on_install"`
+}
 
 var (
 	k          = koanf.New(".")
@@ -28,6 +35,15 @@ func Load(v interface{}) error {
 		if err != nil {
 			return err
 		}
+
+		err = writeDefault()
+		if err != nil {
+			return err
+		}
+	}
+
+	if err := loadDefault(); err != nil {
+		log.Println("failed to load default config values")
 	}
 
 	if err := k.Load(file.Provider(configPath), parser); err != nil {
@@ -39,6 +55,22 @@ func Load(v interface{}) error {
 	}
 
 	return nil
+}
+
+func loadDefault() error {
+	return k.Load(confmap.Provider(map[string]interface{}{
+		"mod_folder":        "",
+		"enable_on_install": true,
+	}, "."), nil)
+}
+
+func writeDefault() error {
+	err := loadDefault()
+	if err != nil {
+		return err
+	}
+
+	return save()
 }
 
 func Get(key string) interface{} {
