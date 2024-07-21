@@ -52,6 +52,9 @@ export default function HomePage() {
       <div className="flex w-full items-center justify-between">
         <h1 className="px-2 text-2xl font-medium">All Mods</h1>
         <div className="flex items-center gap-x-4">
+          <Button variant="ghost" size="icon" onClick={() => refetch()}>
+            <RefreshCw className="size-5 stroke-muted-foreground" />
+          </Button>
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}

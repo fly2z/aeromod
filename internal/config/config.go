@@ -13,8 +13,8 @@ import (
 )
 
 type AppConfig struct {
-	ModFolder       string `koanf:"mod_folder"`
-	EnableOnInstall bool   `koanf:"enable_on_install"`
+	ModFolder       string `koanf:"mod_folder" json:"mod_folder"`
+	EnableOnInstall bool   `koanf:"enable_on_install" json:"enable_on_install"`
 }
 
 var (

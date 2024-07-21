@@ -12,7 +12,7 @@ export default function useSetup() {
       setStatus(isComplete ? "COMPLETE" : "NOTCOMPLETE");
     };
 
-    checkSetup();
+    checkSetup().catch(console.error);
   }, []);
 
   return { status };

@@ -31,7 +31,10 @@ An external mod manager for Microsoft Flight Simulator.
 
 AeroMod is a tool designed to efficiently manage Microsoft Flight Simulator mods. With AeroMod, you can easily enable, disable, install, and uninstall mods without physically moving files. AeroMod is Windows-only.
 
-![](./.github/screenshot.png)
+## Screenshots
+
+![](./.github/screenshot-01.png)
+![](./.github/screenshot-02.png)
 
 ## Features
 

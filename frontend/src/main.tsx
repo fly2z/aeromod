@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import RootLayout from "@/routes/root";
 import HomePage from "@/routes/home";
 import ModPage from "@/routes/mod";
+import SettingsPage from "@/routes/settings";
 import "@/styles/index.css";
 
 const container = document.getElementById("root");
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "/mod/:id",
         element: <ModPage />,
+      },
+      {
+        path: "/settings",
+        element: <SettingsPage />,
       },
     ],
   },

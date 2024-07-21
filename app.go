@@ -46,6 +46,10 @@ func (a *App) reloadConfig() error {
 		return err
 	}
 
+	if err := a.createMSFSClient(); err != nil {
+		log.Printf("failed to update msfs client: %v\n", err)
+	}
+
 	return nil
 }
 
@@ -210,8 +214,6 @@ func (a *App) InstallMod() (bool, error) {
 		return false, fmt.Errorf("failed to find mods: %w", err)
 	}
 
-	fmt.Printf("\n\n\n\nFOUND %d MODS\n\n\n\n", len(mods))
-
 	if len(mods) < 1 {
 		return false, nil
 	}
@@ -233,4 +235,17 @@ func (a *App) InstallMod() (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (a *App) GetSettings() config.AppConfig {
+	return *a.config
+}
+
+func (a *App) SetSetting(key string, val interface{}) error {
+	err := config.Set(key, val)
+	if err != nil {
+		return err
+	}
+
+	return a.reloadConfig()
 }
