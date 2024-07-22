@@ -21,6 +21,7 @@ export default function HomePage() {
   });
   const installMutation = useMutation({
     mutationFn: installMod,
+    onSuccess: () => refetch(),
   });
 
   const [search, setSearch] = useState<string>("");
