@@ -21,14 +21,15 @@ func main() {
 		log.Fatalf("failed to load config: %v\n", err)
 	}
 
-	// Create an instance of the app structure
+	// create an instance of the app structure
 	app := NewApp(&conf)
 
-	// Create application with options
+	// create application with options
 	err = wails.Run(&options.App{
-		Title:  "AeroMod",
-		Width:  1280,
-		Height: 720,
+		Title:     "AeroMod",
+		Width:     1280,
+		Height:    720,
+		Frameless: true,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

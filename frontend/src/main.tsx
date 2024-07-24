@@ -9,6 +9,7 @@ import RootLayout from "@/routes/root";
 import HomePage from "@/routes/home";
 import ModPage from "@/routes/mod";
 import SettingsPage from "@/routes/settings";
+import AppBar from "@/components/app-bar";
 import "@/styles/index.css";
 
 const container = document.getElementById("root");
@@ -40,6 +41,7 @@ const queryClient = new QueryClient();
 root.render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="aeromod-theme">
+      <AppBar />
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <Toaster />
