@@ -14,7 +14,17 @@ export default function AppBar() {
   const [isMaximised, setIsMaximised] = useState<boolean>();
 
   useEffect(() => {
-    WindowIsMaximised().then(setIsMaximised);
+    const updateMaximised = () => {
+      WindowIsMaximised().then(setIsMaximised);
+    };
+
+    // get the window state on load
+    updateMaximised();
+
+    window.addEventListener("resize", updateMaximised);
+    return () => {
+      window.removeEventListener("resize", updateMaximised);
+    };
   }, []);
 
   const handleAction = (action: "TOGGLE_MAXIMISE" | "MINIMISE" | "QUIT") => {
@@ -38,18 +48,9 @@ export default function AppBar() {
     }
   };
 
-  const handleDrag = () => {
-    // handle restore down after window drag
-    WindowIsMaximised().then((v) => {
-      console.log("IS MAXIMISED: ", v);
-      setIsMaximised(v);
-    });
-  };
-
   return (
     <div
       onClick={handleClick}
-      onDrag={handleDrag}
       className="fixed left-0 top-0 flex h-10 w-full select-none items-center justify-between border-b bg-background"
       style={{ "--wails-draggable": "drag" } as React.CSSProperties}
     >
