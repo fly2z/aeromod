@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { GetModManifest, GetModThumbnail } from "@wailsjs/go/main/App";
 import { msfs } from "@wailsjs/go/models";
@@ -36,12 +36,8 @@ export default function ModPage() {
     };
 
     const fetchThumbnail = async () => {
-      try {
-        const t = await GetModThumbnail(id);
-        setThumbnail(base64Image(t));
-      } catch (error) {
-        // mod doesnt have a thumbnail
-      }
+      const t = await GetModThumbnail(id);
+      setThumbnail(base64Image(t));
     };
 
     fetchManifest();
@@ -55,7 +51,9 @@ export default function ModPage() {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Mods</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link to="/">Mods</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
