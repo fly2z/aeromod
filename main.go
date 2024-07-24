@@ -29,6 +29,8 @@ func main() {
 		Title:     "AeroMod",
 		Width:     1280,
 		Height:    720,
+		MinWidth:  800,
+		MinHeight: 450,
 		Frameless: true,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
