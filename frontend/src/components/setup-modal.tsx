@@ -18,7 +18,7 @@ export default function SetupDialog() {
         setModDir(path);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -31,7 +31,7 @@ export default function SetupDialog() {
       navigate(0);
     } catch (error) {
       toast.error("Failed to complete setup. Please try again.");
-      console.log(error);
+      console.error(error);
     }
   };
 

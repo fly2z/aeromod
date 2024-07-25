@@ -249,3 +249,13 @@ func (a *App) SetSetting(key string, val interface{}) error {
 
 	return a.reloadConfig()
 }
+
+func (a *App) VerifyMod(name string) ([]msfs.VerificationResult, error) {
+	result, err := a.msfsClient.VerifyMod(name)
+	if err != nil {
+		log.Println(err)
+		return []msfs.VerificationResult{}, err
+	}
+
+	return result, nil
+}

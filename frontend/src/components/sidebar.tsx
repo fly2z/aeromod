@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { ListIcon, SettingsIcon } from "lucide-react";
+import { CheckCircleIcon, ListIcon, SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -7,6 +7,10 @@ const routes = [
   {
     href: "/",
     icon: ListIcon,
+  },
+  {
+    href: "/verify",
+    icon: CheckCircleIcon,
   },
 ];
 

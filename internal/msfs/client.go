@@ -1,8 +1,10 @@
 package msfs
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -99,4 +101,56 @@ func (c *Client) GetModThumbnailBase64(modName string) (string, error) {
 	}
 
 	return utils.Base64EncodeFile(thumbnailPath)
+}
+
+// VerifyMod checks if the files match their expected properties.
+func (c *Client) VerifyMod(name string) ([]VerificationResult, error) {
+	modBase := filepath.Join(c.config.modFolder, name)
+	layoutFile, err := os.Open(filepath.Join(modBase, "layout.json"))
+	if err != nil {
+		return nil, err
+	}
+
+	defer layoutFile.Close()
+
+	byteValue, _ := io.ReadAll(layoutFile)
+
+	var modLayout ModLayout
+	err = json.Unmarshal(byteValue, &modLayout)
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]VerificationResult, 0)
+	for _, fileInfo := range modLayout.Content {
+		filePath := filepath.Join(modBase, fileInfo.Path)
+		result := VerificationResult{Path: fileInfo.Path}
+
+		// check if the file exists
+		fileStat, err := os.Stat(filePath)
+		if err != nil {
+			if os.IsNotExist(err) {
+				result.Error = fmt.Sprintf("File %s does not exist.", filePath)
+				results = append(results, result)
+				continue
+			} else {
+				result.Error = fmt.Sprintf("Unable to access file %s: %v", filePath, err)
+				results = append(results, result)
+				continue
+			}
+		}
+
+		result.Found = true
+
+		// check file size
+		result.Size = fileStat.Size()
+		result.SizeOk = result.Size == fileInfo.Size
+		if !result.SizeOk {
+			result.Error = fmt.Sprintf("File %s size mismatch. Expected %d bytes, got %d bytes.",
+				fileInfo.Path, fileInfo.Size, fileStat.Size())
+		}
+
+		results = append(results, result)
+	}
+	return results, nil
 }
