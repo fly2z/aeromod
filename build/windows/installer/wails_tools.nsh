@@ -8,16 +8,16 @@
     !define INFO_PROJECTNAME "AeroMod"
 !endif
 !ifndef INFO_COMPANYNAME
-    !define INFO_COMPANYNAME "fly2z"
+    !define INFO_COMPANYNAME "AeroMod"
 !endif
 !ifndef INFO_PRODUCTNAME
     !define INFO_PRODUCTNAME "AeroMod"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "0.8.3"
+    !define INFO_PRODUCTVERSION "0.8.4"
 !endif
 !ifndef INFO_COPYRIGHT
-    !define INFO_COPYRIGHT "Copyright........."
+    !define INFO_COPYRIGHT "Built under GPL-3.0 license"
 !endif
 !ifndef PRODUCT_EXECUTABLE
     !define PRODUCT_EXECUTABLE "${INFO_PROJECTNAME}.exe"

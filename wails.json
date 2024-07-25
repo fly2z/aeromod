@@ -11,9 +11,10 @@
     "email": "69116434+fly2z@users.noreply.github.com"
   },
   "info": {
-    "companyName": "fly2z",
+    "companyName": "AeroMod",
     "productName": "AeroMod",
-    "productVersion": "0.8.3",
+    "productVersion": "0.8.4",
+    "copyright": "Built under GPL-3.0 license",
     "comments": "External mod manager for MSFS"
   }
 }
