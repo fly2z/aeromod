@@ -23,6 +23,7 @@ export default function Sidebar() {
         {routes.map((r) => (
           <Link
             to={r.href}
+            key={r.href}
             className={cn(
               "flex h-10 w-10 items-center justify-center rounded-md transition-colors",
               pathname === r.href
