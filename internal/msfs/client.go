@@ -94,7 +94,7 @@ func (c *Client) IsModEnabled(modName string) (bool, error) {
 }
 
 func (c *Client) GetModThumbnailBase64(modName string) (string, error) {
-	modPath := filepath.Join(c.config.communityFolder, modName)
+	modPath := filepath.Join(c.config.modFolder, modName)
 	thumbnailPath := filepath.Join(modPath, "ContentInfo", modName, "Thumbnail.jpg")
 	if _, err := os.Stat(thumbnailPath); errors.Is(err, os.ErrNotExist) {
 		return "", fmt.Errorf("mod: %s, doesnt have a thumbnail", modName)
