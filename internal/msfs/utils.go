@@ -2,6 +2,7 @@ package msfs
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -47,11 +48,13 @@ func IsSimPackagesFolder(folder string) bool {
 
 // FindSimPackagesFolder tries to find the MSFS packages folder
 func FindSimPackagesFolder() (string, bool) {
+	log.Println("Trying to find sim path from default Steam installation")
 	steamPath := filepath.Join((os.Getenv("APPDATA")), "Microsoft Flight Simulator")
 	if IsSimFolder(steamPath) {
 		return filepath.Join(steamPath, "Packages"), true
 	}
 
+	log.Println("Trying to find sim path from default MS Store installation")
 	msStorePath := filepath.Join(os.Getenv("LOCALAPPDATA"), "Packages", "Microsoft.FlightSimulator_8wekyb3d8bbwe", "LocalCache")
 	if IsSimPackagesFolder(msStorePath) {
 		return filepath.Join(msStorePath, "Packages"), true

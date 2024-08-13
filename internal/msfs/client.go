@@ -20,12 +20,7 @@ type ClientConfig struct {
 	modFolder       string
 }
 
-func NewClient(modFolder string) *Client {
-	communityFolder, found := FindSimCommunityFolder()
-	if !found {
-		return nil
-	}
-
+func NewClient(communityFolder, modFolder string) *Client {
 	return &Client{
 		config: &ClientConfig{
 			communityFolder: communityFolder,

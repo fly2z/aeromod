@@ -14,7 +14,7 @@
     !define INFO_PRODUCTNAME "AeroMod"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "0.8.6"
+    !define INFO_PRODUCTVERSION "0.8.7"
 !endif
 !ifndef INFO_COPYRIGHT
     !define INFO_COPYRIGHT "Built under GPL-3.0 license"

@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	CONFIG_COMMUNITY_FOLDER  = "community_folder"
 	CONFIG_MOD_FOLDER        = "mod_folder"
 	CONFIG_ENABLE_ON_INSTALL = "enable_on_install"
 )
@@ -54,12 +55,17 @@ func (a *App) reloadConfig() error {
 }
 
 func (a *App) createMSFSClient() error {
+	communityFolder := a.config.CommunityFolder
+	if communityFolder == "" {
+		return fmt.Errorf("community folder path cannot be empty")
+	}
+
 	modFolder := a.config.ModFolder
 	if modFolder == "" {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
-	a.msfsClient = msfs.NewClient(modFolder)
+	a.msfsClient = msfs.NewClient(communityFolder, modFolder)
 	return nil
 }
 
@@ -67,25 +73,34 @@ func (a *App) IsSetupComplete() bool {
 	return a.setupComplete
 }
 
-func (a *App) CompleteSetup(modDirPath string) error {
-	if modDirPath == "" {
+func (a *App) FindSimCommunityFolder() (string, error) {
+	path, found := msfs.FindSimCommunityFolder()
+	if !found {
+		return "", fmt.Errorf("failed to find sim community directory")
+	}
+
+	return path, nil
+}
+
+func (a *App) CompleteSetup(communityPath, modPath string) error {
+	if communityPath == "" {
+		return fmt.Errorf("community folder path cannot be empty")
+	}
+
+	if modPath == "" {
 		return fmt.Errorf("mod folder path cannot be empty")
 	}
 
-	if _, found := msfs.FindSimCommunityFolder(); !found {
-		return fmt.Errorf("failed to find community directory")
+	if err := config.Set(CONFIG_COMMUNITY_FOLDER, communityPath); err != nil {
+		return err
 	}
 
-	if err := config.Set(CONFIG_MOD_FOLDER, modDirPath); err != nil {
+	if err := config.Set(CONFIG_MOD_FOLDER, modPath); err != nil {
 		return err
 	}
 
 	if err := a.reloadConfig(); err != nil {
 		return fmt.Errorf("failed to reload config")
-	}
-
-	if err := a.createMSFSClient(); err != nil {
-		return err
 	}
 
 	a.setupComplete = true

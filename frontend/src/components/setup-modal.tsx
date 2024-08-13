@@ -1,20 +1,53 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { CompleteSetup, OpenDirectoryDialog } from "@wailsjs/go/main/App";
-import { FolderOpen } from "lucide-react";
+import {
+  CompleteSetup,
+  FindSimCommunityFolder,
+  OpenDirectoryDialog,
+} from "@wailsjs/go/main/App";
+import { ArrowLeft, CheckCircle2, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function SetupDialog() {
   const navigate = useNavigate();
 
-  const [modDir, setModDir] = useState<string>();
-  const selected = modDir && modDir !== "";
+  const [step, setStep] = useState(0);
+
+  const [communityDir, setCommumityDir] = useState<string | null>(null);
+  const [autoDetected, setAutoDetected] = useState(false);
+  const [modDir, setModDir] = useState<string | null>(null);
+
+  useEffect(() => {
+    const autoDetectCommunityFolder = async () => {
+      try {
+        const path = await FindSimCommunityFolder();
+        setCommumityDir(path);
+        setAutoDetected(true);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    autoDetectCommunityFolder();
+  }, []);
+
+  const selectCommunityDir = async () => {
+    try {
+      const path = await OpenDirectoryDialog("Select Community Folder");
+      if (path !== "") {
+        setCommumityDir(path);
+        setAutoDetected(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const selectModDir = async () => {
     try {
       const path = await OpenDirectoryDialog("Select Mod Folder");
-      if (path != "") {
+      if (path !== "") {
         setModDir(path);
       }
     } catch (error) {
@@ -23,14 +56,14 @@ export default function SetupDialog() {
   };
 
   const complete = async () => {
-    if (!selected) return;
+    if (!communityDir || !modDir) return;
 
     try {
-      await CompleteSetup(modDir);
+      await CompleteSetup(communityDir, modDir);
       toast.success("Setup complete!");
       navigate(0);
     } catch (error) {
-      toast.error("Failed to complete setup. Please try again.");
+      toast.error(`Error: ${error}`);
       console.error(error);
     }
   };
@@ -41,38 +74,83 @@ export default function SetupDialog() {
         <div>
           <h1 className="text-2xl font-bold">Welcome to AeroMod</h1>
           <p className="text-muted-foreground">
-            Please select the folder where your mods will be stored.
+            {step === 0
+              ? "Please select the MSFS community folder."
+              : "Please select the folder where your mods will be stored."}
           </p>
         </div>
-        <div className="flex flex-col gap-y-3">
-          {!modDir ? (
-            <div
-              className="flex h-12 w-full cursor-pointer items-center justify-center gap-x-3 rounded-md bg-blue-500 transition-colors hover:bg-blue-600"
-              onClick={selectModDir}
-            >
-              <FolderOpen className="h-6 w-6" />
-              <span className="text-sm font-semibold">Select Folder</span>
+        {step === 0 ? (
+          <div className="flex flex-col gap-y-3">
+            {!communityDir ? (
+              <div
+                className="flex h-12 w-full cursor-pointer items-center justify-center gap-x-3 rounded-md bg-blue-500 transition-colors hover:bg-blue-600"
+                onClick={selectCommunityDir}
+              >
+                <FolderOpen className="h-6 w-6" />
+                <span className="text-sm font-semibold">Select Folder</span>
+              </div>
+            ) : (
+              <div
+                className="flex h-12 w-full cursor-pointer items-center justify-center gap-x-3 rounded-md bg-blue-500 transition-colors hover:bg-blue-600"
+                onClick={selectCommunityDir}
+              >
+                <FolderOpen className="h-6 w-6" />
+                <span className="text-sm font-semibold">
+                  Change Folder {autoDetected && "(Auto Detected)"}
+                </span>
+              </div>
+            )}
+            <div className="flex w-full">
+              <Button
+                className="h-12 w-full rounded-md"
+                variant="outline"
+                disabled={!communityDir}
+                onClick={() => setStep(1)}
+              >
+                Next
+              </Button>
             </div>
-          ) : (
-            <div
-              className="flex h-12 w-full cursor-pointer items-center justify-center gap-x-3 rounded-md bg-blue-500 transition-colors hover:bg-blue-600"
-              onClick={selectModDir}
-            >
-              <FolderOpen className="h-6 w-6" />
-              <span className="text-sm font-semibold">Change Folder</span>
-            </div>
-          )}
-          <div className="flex w-full">
-            <Button
-              className="h-12 w-full rounded-md"
-              variant="outline"
-              disabled={!selected}
-              onClick={complete}
-            >
-              Continue
-            </Button>
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col gap-y-3">
+            {!modDir ? (
+              <div
+                className="flex h-12 w-full cursor-pointer items-center justify-center gap-x-3 rounded-md bg-blue-500 transition-colors hover:bg-blue-600"
+                onClick={selectModDir}
+              >
+                <FolderOpen className="h-6 w-6" />
+                <span className="text-sm font-semibold">Select Folder</span>
+              </div>
+            ) : (
+              <div
+                className="flex h-12 w-full cursor-pointer items-center justify-center gap-x-3 rounded-md bg-blue-500 transition-colors hover:bg-blue-600"
+                onClick={selectModDir}
+              >
+                <FolderOpen className="h-6 w-6" />
+                <span className="text-sm font-semibold">Change Folder</span>
+              </div>
+            )}
+            <div className="flex w-full gap-x-2">
+              <Button
+                className="h-12 w-full gap-x-2"
+                variant="ghost"
+                onClick={() => setStep(0)}
+              >
+                <ArrowLeft className="size-5" />
+                Back
+              </Button>
+              <Button
+                className="h-12 w-full gap-x-2"
+                variant="default"
+                disabled={!modDir}
+                onClick={complete}
+              >
+                <CheckCircle2 className="size-5" />
+                Complete Setup
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

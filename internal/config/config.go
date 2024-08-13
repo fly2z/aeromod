@@ -13,6 +13,7 @@ import (
 )
 
 type AppConfig struct {
+	CommunityFolder string `koanf:"community_folder" json:"community_folder"`
 	ModFolder       string `koanf:"mod_folder" json:"mod_folder"`
 	EnableOnInstall bool   `koanf:"enable_on_install" json:"enable_on_install"`
 }
