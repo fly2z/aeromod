@@ -53,11 +53,11 @@ AeroMod is a tool designed to efficiently manage Microsoft Flight Simulator mods
 
 ## Roadmap
 
+- Add presets for saving enabled mods.
+- Display scenery locations on a map.
 - Mod grouping ability.
 - Checking version conflicts.
 - Installing mods from remote URLs.
-- Caching mods for faster load times.
-- Customizable layout.
 - Categories for searching mods efficiently (e.g., SCENERY, LIVERY).
 
 ## Environment Setup
