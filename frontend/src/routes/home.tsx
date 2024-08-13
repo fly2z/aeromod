@@ -76,7 +76,7 @@ export default function HomePage() {
           </Button>
         </div>
       </div>
-      <ModList mods={filteredMods} loading={isPending} />
+      <ModList mods={filteredMods} loading={isPending} onReload={refetch} />
     </div>
   );
 }

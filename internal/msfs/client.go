@@ -75,11 +75,7 @@ func (c *Client) DisableMod(modName string) error {
 }
 
 func (c *Client) UninstallMod(name string) error {
-	if err := c.DisableMod(name); err != nil {
-		return err
-	}
-
-	modPath := filepath.Join(c.config.communityFolder, name)
+	modPath := filepath.Join(c.config.modFolder, name)
 	return utils.Rmdir(modPath)
 }
 

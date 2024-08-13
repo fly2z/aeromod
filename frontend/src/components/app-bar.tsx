@@ -51,7 +51,7 @@ export default function AppBar() {
   return (
     <div
       onClick={handleClick}
-      className="fixed left-0 top-0 flex h-10 w-full select-none items-center justify-between border-b bg-background"
+      className="pointer-events-auto fixed left-0 top-0 z-[999999] flex h-10 w-full select-none items-center justify-between border-b bg-background"
       style={{ "--wails-draggable": "drag" } as React.CSSProperties}
     >
       <div className="flex items-center gap-x-2 px-2">

@@ -167,6 +167,31 @@ func (a *App) DisableMod(modName string) error {
 	return nil
 }
 
+func (a *App) UninsallMod(modName string) error {
+	if a.msfsClient == nil {
+		return fmt.Errorf("msfs client not initialized")
+	}
+
+	enabled, err := a.msfsClient.IsModEnabled(modName)
+	if err != nil {
+		log.Printf("failed to check mod status: %v\n", err)
+		return fmt.Errorf("failed to check mod status: %w", err)
+	}
+
+	if enabled {
+		err := a.msfsClient.DisableMod(modName)
+		if err != nil {
+			return fmt.Errorf("error disabling mod: %w", err)
+		}
+	}
+
+	if err := a.msfsClient.UninstallMod(modName); err != nil {
+		return fmt.Errorf("error uninstalling mod: %w", err)
+	}
+
+	return nil
+}
+
 func (a *App) OpenDirectoryDialog(title string) (string, error) {
 	dirPath, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: title,
