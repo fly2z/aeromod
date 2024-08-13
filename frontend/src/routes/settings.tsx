@@ -38,8 +38,16 @@ export default function SettingsPage() {
           onChange={(v) => set("mod_folder", v)}
         />
         <SettingsItem
+          key="community_folder"
+          name="Community Folder"
+          description="The MSFS community folder."
+          type="input"
+          value={settings.community_folder}
+          onChange={(v) => set("community_folder", v)}
+        />
+        <SettingsItem
           key="enable_on_install"
-          name="Enable Mod Automatically"
+          name="Enable Mods Automatically"
           description="Automatically enable mods after installation."
           type="checkbox"
           value={settings.enable_on_install}
