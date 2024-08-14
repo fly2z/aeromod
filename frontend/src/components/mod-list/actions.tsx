@@ -3,8 +3,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -18,9 +16,7 @@ export default function ModActions({ onUninstall, children }: ModActionsProps) {
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Mod Actions</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onUninstall}>
+        <DropdownMenuItem className="cursor-pointer" onClick={onUninstall}>
           <Trash2 className="mr-2 h-4 w-4" />
           <span>Uninstall</span>
         </DropdownMenuItem>

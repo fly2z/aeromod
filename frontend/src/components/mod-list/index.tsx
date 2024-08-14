@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { msfs } from "@wailsjs/go/models";
@@ -27,8 +27,6 @@ export default function ModList({
   loading = false,
   onReload,
 }: ModListProps) {
-  const navigate = useNavigate();
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [confirmPrompt, setConfirmPrompt] = useState<ConfirmPrompt>({
     title: "",
@@ -98,11 +96,16 @@ export default function ModList({
                 <p className="underline">{m.name}</p>
               </Link>
             </div>
-            <ModActions onUninstall={() => uninstallMod(m.name)}>
-              <Button variant="outline" size="icon">
-                <MoreHorizontal className="h-5 w-5" />
-              </Button>
-            </ModActions>
+            <div className="flex items-center gap-x-2">
+              <div className="px-3 py-2 text-sm">
+                <span className="text-muted-foreground">{m.type}</span>
+              </div>
+              <ModActions onUninstall={() => uninstallMod(m.name)}>
+                <Button variant="outline" size="icon">
+                  <MoreHorizontal className="h-5 w-5" />
+                </Button>
+              </ModActions>
+            </div>
           </div>
         ))}
       </div>

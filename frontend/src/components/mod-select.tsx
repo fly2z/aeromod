@@ -19,7 +19,7 @@ import {
 import { msfs } from "@wailsjs/go/models";
 
 type ModSelectProps = {
-  mods?: msfs.Mod[];
+  mods?: string[];
   onSelect: (value: string) => void;
 };
 
@@ -27,9 +27,7 @@ export default function ModSelect({ mods, onSelect }: ModSelectProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
 
-  const list = useMemo(() => mods?.map((m) => m.name), [mods]);
-
-  if (!list) return null;
+  if (!mods) return null;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -40,7 +38,7 @@ export default function ModSelect({ mods, onSelect }: ModSelectProps) {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value ? list.find((l) => l === value) : "Select mod..."}
+          {value ? mods.find((l) => l === value) : "Select mod..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -50,7 +48,7 @@ export default function ModSelect({ mods, onSelect }: ModSelectProps) {
           <CommandEmpty>No mod found.</CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {list.map((name) => (
+              {mods.map((name) => (
                 <CommandItem
                   key={name}
                   value={name}

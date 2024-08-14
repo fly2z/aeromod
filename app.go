@@ -107,7 +107,14 @@ func (a *App) CompleteSetup(communityPath, modPath string) error {
 	return nil
 }
 
-func (a *App) GetMods() []msfs.Mod {
+func (a *App) GetModNames() []string {
+	if a.msfsClient == nil {
+		return []string{}
+	}
+	return a.msfsClient.GetModNames()
+}
+
+func (a *App) GetAllMods() []msfs.Mod {
 	if a.msfsClient == nil {
 		return []msfs.Mod{}
 	}
@@ -119,11 +126,24 @@ func (a *App) GetMods() []msfs.Mod {
 		enabled, err := a.msfsClient.IsModEnabled(name)
 		if err != nil {
 			log.Printf("failed to check mod status: %v\n", err)
-			mods = append(mods, msfs.Mod{Name: name, Enabled: false})
+			mods = append(mods, msfs.Mod{Name: name, Type: "SCENERY", Enabled: false})
 			continue
 		}
 
-		mods = append(mods, msfs.Mod{Name: name, Enabled: enabled})
+		manifest, err := a.msfsClient.ParsePackageManifest(name)
+		if err != nil {
+			log.Printf("failed to parse mod manifest: %v\n", err)
+			mods = append(mods, msfs.Mod{Name: name, Type: "UNKNOWN", Enabled: enabled})
+			continue
+		}
+
+		ct := strings.ToUpper(strings.TrimSpace(manifest.ContentType))
+		if ct == "" {
+			mods = append(mods, msfs.Mod{Name: name, Type: "UNKNOWN", Enabled: enabled})
+			continue
+		}
+
+		mods = append(mods, msfs.Mod{Name: name, Type: ct, Enabled: enabled})
 	}
 
 	return mods

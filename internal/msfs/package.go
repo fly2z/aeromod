@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 type PackageManifest struct {
@@ -19,7 +19,7 @@ type PackageManifest struct {
 }
 
 func (c *Client) ParsePackageManifest(packageName string) (*PackageManifest, error) {
-	manifestFile, err := os.Open(path.Join(c.config.modFolder, packageName, "manifest.json"))
+	manifestFile, err := os.Open(filepath.Join(c.config.modFolder, packageName, "manifest.json"))
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CircleAlert, Download, Loader2, RefreshCw } from "lucide-react";
-import { GetMods } from "@wailsjs/go/main/App";
+import { GetAllMods } from "@wailsjs/go/main/App";
 import { installMod } from "@/lib/install";
 
 import { Input } from "@/components/ui/input";
@@ -15,8 +15,8 @@ export default function HomePage() {
     data: mods,
     refetch,
   } = useQuery({
-    queryKey: ["getMods"],
-    queryFn: async () => GetMods(),
+    queryKey: ["getAllMods"],
+    queryFn: () => GetAllMods(),
     retry: false,
   });
   const installMutation = useMutation({

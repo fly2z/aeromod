@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CheckCircle2, CircleAlert } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { GetMods, VerifyMod } from "@wailsjs/go/main/App";
+import { GetModNames, VerifyMod } from "@wailsjs/go/main/App";
 
 import {
   Tooltip,
@@ -17,8 +17,8 @@ export default function VerifyPage() {
   const [selectedModName, setSelectedModName] = useState<string>();
 
   const { data: mods } = useQuery({
-    queryKey: ["getMods"],
-    queryFn: async () => GetMods(),
+    queryKey: ["getModNames"],
+    queryFn: async () => GetModNames(),
   });
 
   const {
