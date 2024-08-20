@@ -1,6 +1,6 @@
 module github.com/fly2z/aeromod
 
-go 1.23
+go 1.22.6
 
 require (
 	github.com/adrg/xdg v0.4.0
