@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { msfs } from "@wailsjs/go/models";
-import { UninsallMod } from "@wailsjs/go/main/App";
+import { RevealMod, UninsallMod } from "@wailsjs/go/main/App";
 
 import { Button } from "@/components/ui/button";
 import ModToggle from "./toggle";
@@ -100,7 +100,10 @@ export default function ModList({
               <div className="px-3 py-2 text-sm">
                 <span className="text-muted-foreground">{m.type}</span>
               </div>
-              <ModActions onUninstall={() => uninstallMod(m.name)}>
+              <ModActions
+                onUninstall={() => uninstallMod(m.name)}
+                onReveal={() => RevealMod(m.name)}
+              >
                 <Button variant="outline" size="icon">
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>

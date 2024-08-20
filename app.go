@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -71,6 +72,19 @@ func (a *App) createMSFSClient() error {
 
 func (a *App) IsSetupComplete() bool {
 	return a.setupComplete
+}
+
+func (a *App) GetSettings() config.AppConfig {
+	return *a.config
+}
+
+func (a *App) SetSetting(key string, val interface{}) error {
+	err := config.Set(key, val)
+	if err != nil {
+		return err
+	}
+
+	return a.reloadConfig()
 }
 
 func (a *App) FindSimCommunityFolder() (string, error) {
@@ -297,19 +311,6 @@ func (a *App) InstallMod() (bool, error) {
 	return true, nil
 }
 
-func (a *App) GetSettings() config.AppConfig {
-	return *a.config
-}
-
-func (a *App) SetSetting(key string, val interface{}) error {
-	err := config.Set(key, val)
-	if err != nil {
-		return err
-	}
-
-	return a.reloadConfig()
-}
-
 func (a *App) VerifyMod(name string) ([]msfs.VerificationResult, error) {
 	result, err := a.msfsClient.VerifyMod(name)
 	if err != nil {
@@ -318,4 +319,10 @@ func (a *App) VerifyMod(name string) ([]msfs.VerificationResult, error) {
 	}
 
 	return result, nil
+}
+
+func (a *App) RevealMod(name string) error {
+	cmd := exec.Command("explorer", a.msfsClient.GetModPath(name))
+	// cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	return cmd.Run()
 }

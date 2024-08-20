@@ -84,6 +84,10 @@ func (c *Client) IsModEnabled(modName string) (bool, error) {
 	return utils.IsJunction(modLink)
 }
 
+func (c *Client) GetModPath(modName string) string {
+	return filepath.Join(c.config.modFolder, modName)
+}
+
 func (c *Client) GetModThumbnailBase64(modName string) (string, error) {
 	modPath := filepath.Join(c.config.modFolder, modName)
 	thumbnailPath := filepath.Join(modPath, "ContentInfo", modName, "Thumbnail.jpg")
