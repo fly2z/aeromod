@@ -1,9 +1,23 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CircleAlert, Download, Loader2, RefreshCw } from "lucide-react";
+import {
+  ChevronDown,
+  CircleAlert,
+  Download,
+  Loader2,
+  RefreshCw,
+} from "lucide-react";
 import { GetAllMods } from "@wailsjs/go/main/App";
 import { installMod } from "@/lib/install";
 
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ModList from "@/components/mod-list";
@@ -19,18 +33,28 @@ export default function HomePage() {
     queryFn: () => GetAllMods(),
     retry: false,
   });
+
   const installMutation = useMutation({
     mutationFn: installMod,
     onSuccess: () => refetch(),
   });
 
   const [search, setSearch] = useState<string>("");
+
+  const contentTypes = useMemo(
+    () => [...new Set(mods?.map((mod) => mod.type))],
+    [mods]
+  );
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+
   const filteredMods = useMemo(
     () =>
-      mods?.filter(({ name }) =>
-        name.toLowerCase().trim().includes(search.toLowerCase().trim())
+      mods?.filter(
+        ({ name, type }) =>
+          name.toLowerCase().trim().includes(search.toLowerCase().trim()) &&
+          (selectedTypes.length === 0 || selectedTypes.includes(type))
       ),
-    [mods, search]
+    [mods, search, selectedTypes]
   );
 
   if (error) {
@@ -51,7 +75,7 @@ export default function HomePage() {
   return (
     <div className="flex h-full flex-col gap-y-2 px-4 py-4">
       <div className="flex w-full items-center justify-between">
-        <h1 className="px-2 text-2xl font-medium">All Mods</h1>
+        <h1 className="text-2xl font-semibold">All Mods</h1>
         <div className="flex items-center gap-x-4">
           <Button variant="ghost" size="icon" onClick={() => refetch()}>
             <RefreshCw className="size-5 stroke-muted-foreground" />
@@ -72,10 +96,43 @@ export default function HomePage() {
             ) : (
               <Download className="size-4" />
             )}
-            Install
+            {installMutation.isPending ? "Installing..." : "Install"}
           </Button>
         </div>
       </div>
+      {!isPending && (
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <ChevronDown className="mr-2 size-4 text-muted-foreground" />{" "}
+                Filter by Type
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel>Mod Type</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {contentTypes.map((t) => (
+                <DropdownMenuCheckboxItem
+                  key={t}
+                  checked={selectedTypes.includes(t)}
+                  onCheckedChange={(c) => {
+                    if (c) {
+                      setSelectedTypes((prevTypes) => [...prevTypes, t]);
+                    } else {
+                      setSelectedTypes((prevTypes) =>
+                        prevTypes.filter((type) => type !== t)
+                      );
+                    }
+                  }}
+                >
+                  {t}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
       <ModList mods={filteredMods} loading={isPending} onReload={refetch} />
     </div>
   );
