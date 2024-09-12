@@ -140,24 +140,39 @@ func (a *App) GetAllMods() []msfs.Mod {
 		enabled, err := a.msfsClient.IsModEnabled(name)
 		if err != nil {
 			log.Printf("failed to check mod status: %v\n", err)
-			mods = append(mods, msfs.Mod{Name: name, Type: "SCENERY", Enabled: false})
+			mods = append(mods, msfs.Mod{Name: name, Type: "UNKNOWN", Creator: "", Version: "", Enabled: false})
 			continue
 		}
 
 		manifest, err := a.msfsClient.ParsePackageManifest(name)
 		if err != nil {
 			log.Printf("failed to parse mod manifest: %v\n", err)
-			mods = append(mods, msfs.Mod{Name: name, Type: "UNKNOWN", Enabled: enabled})
+			mods = append(mods, msfs.Mod{Name: name, Type: "UNKNOWN", Creator: "", Version: "", Enabled: enabled})
 			continue
 		}
 
 		ct := strings.ToUpper(strings.TrimSpace(manifest.ContentType))
 		if ct == "" {
-			mods = append(mods, msfs.Mod{Name: name, Type: "UNKNOWN", Enabled: enabled})
-			continue
+			ct = "UNKNOWN"
 		}
 
-		mods = append(mods, msfs.Mod{Name: name, Type: ct, Enabled: enabled})
+		creator := strings.TrimSpace(manifest.Creator)
+		if creator == "" {
+			creator = "Unknown"
+		}
+
+		version := strings.TrimSpace(manifest.PackageVersion)
+		if version == "" {
+			version = "0.0.0"
+		}
+
+		mods = append(mods, msfs.Mod{
+			Name:    name,
+			Type:    ct,
+			Creator: creator,
+			Version: version,
+			Enabled: enabled,
+		})
 	}
 
 	return mods

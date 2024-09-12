@@ -3,6 +3,8 @@ package msfs
 type Mod struct {
 	Name    string `json:"name"`
 	Type    string `json:"type"`
+	Creator string `json:"creator"`
+	Version string `json:"version"`
 	Enabled bool   `json:"enabled"`
 }
 

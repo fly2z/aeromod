@@ -30,6 +30,22 @@ export default function SettingsPage() {
           <ThemeToggle />
         </div>
         <SettingsItem
+          key="enable_on_install"
+          name="Enable Mods Automatically"
+          description="Automatically enable mods after installation."
+          type="checkbox"
+          value={settings.enable_on_install}
+          onChange={(v) => set("enable_on_install", v)}
+        />
+        <SettingsItem
+          key="show_mod_details"
+          name="Show Mod Details"
+          description="Display extra mod info such as creator name and version in the home page."
+          type="checkbox"
+          value={settings.show_mod_details}
+          onChange={(v) => set("show_mod_details", v)}
+        />
+        <SettingsItem
           key="mod_folder"
           name="Mod Folder"
           description="The directory where downloaded mods will be stored."
@@ -44,14 +60,6 @@ export default function SettingsPage() {
           type="input"
           value={settings.community_folder}
           onChange={(v) => set("community_folder", v)}
-        />
-        <SettingsItem
-          key="enable_on_install"
-          name="Enable Mods Automatically"
-          description="Automatically enable mods after installation."
-          type="checkbox"
-          value={settings.enable_on_install}
-          onChange={(v) => set("enable_on_install", v)}
         />
       </div>
     </div>

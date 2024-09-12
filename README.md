@@ -50,6 +50,7 @@ AeroMod is a tool designed to efficiently manage Microsoft Flight Simulator mods
 - Verify mod files.
 - Search for mods.
 - Display mod details such as type, author, and version.
+- Filter mods using categories.
 
 ## Roadmap
 
@@ -58,7 +59,6 @@ AeroMod is a tool designed to efficiently manage Microsoft Flight Simulator mods
 - Mod grouping ability.
 - Checking version conflicts.
 - Installing mods from remote URLs.
-- Categories for searching mods efficiently (e.g., SCENERY, LIVERY).
 
 ## Environment Setup
 

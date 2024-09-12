@@ -4,6 +4,7 @@ import { Loader2, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { msfs } from "@wailsjs/go/models";
 import { RevealMod, UninsallMod } from "@wailsjs/go/main/App";
+import { useSettings } from "@/hooks/use-settings";
 
 import { Button } from "@/components/ui/button";
 import ModToggle from "./toggle";
@@ -27,6 +28,7 @@ export default function ModList({
   loading = false,
   onReload,
 }: ModListProps) {
+  const { settings } = useSettings();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [confirmPrompt, setConfirmPrompt] = useState<ConfirmPrompt>({
     title: "",
@@ -92,9 +94,23 @@ export default function ModList({
           >
             <div className="flex items-center gap-x-4">
               <ModToggle modId={m.name} enabled={m.enabled} />
-              <Link to={`/mod/${m.name}`}>
-                <p className="underline">{m.name}</p>
-              </Link>
+              {settings?.show_mod_details ? (
+                <div>
+                  <Link to={`/mod/${m.name}`}>
+                    <p className="underline">{m.name}</p>
+                  </Link>
+                  <div className="flex items-center gap-x-2">
+                    <span className="text-sm text-muted-foreground">
+                      {m.creator}
+                    </span>
+                    <span className="text-sm">v{m.version}</span>
+                  </div>
+                </div>
+              ) : (
+                <Link to={`/mod/${m.name}`}>
+                  <p className="underline">{m.name}</p>
+                </Link>
+              )}
             </div>
             <div className="flex items-center gap-x-2">
               <div className="px-3 py-2 text-sm">

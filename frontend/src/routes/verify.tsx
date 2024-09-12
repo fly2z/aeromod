@@ -69,7 +69,7 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="flex h-full flex-col gap-y-6 px-6 py-4">
+    <div className="flex h-full flex-col gap-y-6 p-4">
       <div>
         <h1 className="text-2xl font-semibold">Verify Mods</h1>
       </div>
