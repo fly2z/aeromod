@@ -4,7 +4,7 @@ import { Loader2, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { msfs } from "@wailsjs/go/models";
 import { RevealMod, UninsallMod } from "@wailsjs/go/main/App";
-import { useSettings } from "@/hooks/use-settings";
+import useSettings from "@/hooks/use-settings";
 
 import { Button } from "@/components/ui/button";
 import ModToggle from "./toggle";

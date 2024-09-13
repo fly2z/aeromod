@@ -4,6 +4,7 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { SettingsProvider } from "@/components/providers/settings-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -51,9 +52,11 @@ root.render(
     <ThemeProvider defaultTheme="dark" storageKey="aeromod-theme">
       <AppBar />
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <RouterProvider router={router} />
-        </TooltipProvider>
+        <SettingsProvider>
+          <TooltipProvider>
+            <RouterProvider router={router} />
+          </TooltipProvider>
+        </SettingsProvider>
       </QueryClientProvider>
       <Toaster />
     </ThemeProvider>

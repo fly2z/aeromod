@@ -1,4 +1,4 @@
-import { useSettings } from "@/hooks/use-settings";
+import useSettings from "@/hooks/use-settings";
 import SettingsItem from "@/components/settings-item";
 import { ThemeToggle } from "@/components/theme-toggle";
 
