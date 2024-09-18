@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Hint } from "@/components/hint";
 import ModList from "@/components/mod-list";
 
 export default function HomePage() {
@@ -77,9 +78,11 @@ export default function HomePage() {
       <div className="flex w-full items-center justify-between">
         <h1 className="text-2xl font-semibold">All Mods</h1>
         <div className="flex items-center gap-x-4">
-          <Button variant="ghost" size="icon" onClick={() => refetch()}>
-            <RefreshCw className="size-5 stroke-muted-foreground" />
-          </Button>
+          <Hint label="Reload Mods" side="bottom">
+            <Button variant="ghost" size="icon" onClick={() => refetch()}>
+              <RefreshCw className="size-5 stroke-muted-foreground" />
+            </Button>
+          </Hint>
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
