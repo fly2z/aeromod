@@ -74,7 +74,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-y-2 px-4 py-4">
+    <div className="flex h-full flex-col gap-y-2 px-6 py-4">
       <div className="flex w-full items-center justify-between">
         <h1 className="text-2xl font-semibold">All Mods</h1>
         <div className="flex items-center gap-x-4">
