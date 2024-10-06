@@ -1,10 +1,10 @@
 import { useLocation, Link } from "react-router-dom";
 import { CheckCircleIcon, ListIcon, SettingsIcon } from "lucide-react";
 import { BrowserOpenURL } from "@wailsjs/runtime/runtime";
-import { Button } from "@/components/ui/button";
-import { Hint } from "./hint";
 import { cn } from "@/lib/utils";
 import { GITHUB_URL } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { Hint } from "./hint";
 
 const routes = [
   {

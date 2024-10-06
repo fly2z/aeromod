@@ -266,13 +266,21 @@ func (a *App) GetModThumbnail(modName string) (string, error) {
 	return thumbnail, nil
 }
 
-func (a *App) InstallMod() (bool, error) {
-	archive, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		Title: "Choose Mod",
-	})
+func (a *App) InstallMod(path string) (bool, error) {
+	var archive string
 
-	if err != nil {
-		return false, fmt.Errorf("failed to open directory dialog: %w", err)
+	// open a file dialog if no path is specified
+	if path == "" {
+		var err error
+		archive, err = runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+			Title: "Choose Mod",
+		})
+
+		if err != nil {
+			return false, fmt.Errorf("failed to open directory dialog: %w", err)
+		}
+	} else {
+		archive = path
 	}
 
 	if archive == "" {
@@ -286,7 +294,7 @@ func (a *App) InstallMod() (bool, error) {
 
 	archiveDest := strings.TrimSuffix(archive, ext)
 
-	err = utils.Unzip(archive, archiveDest)
+	err := utils.Unzip(archive, archiveDest)
 	if err != nil {
 		return false, err
 	}

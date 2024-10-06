@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MinusIcon, SquareIcon } from "lucide-react";
+import { DownloadIcon, MinusIcon, SquareIcon } from "lucide-react";
 import {
   WindowIsMaximised,
   WindowMinimise,
@@ -9,6 +9,7 @@ import {
 import appIcon from "@/assets/images/icon.png";
 import maximizeIconLight from "@/assets/icons/maximize-light.png";
 import maximizeIconDark from "@/assets/icons/maximize-dark.png";
+import InstallPanel from "./install-panel";
 
 export default function AppBar() {
   const [isMaximised, setIsMaximised] = useState<boolean>();
@@ -62,6 +63,11 @@ export default function AppBar() {
         className="flex items-center"
         style={{ "--wails-draggable": "no-drag" } as React.CSSProperties}
       >
+        <InstallPanel>
+          <div className="mr-2 flex size-7 cursor-pointer items-center justify-center rounded-md transition hover:bg-accent">
+            <DownloadIcon className="size-4 text-muted-foreground" />
+          </div>
+        </InstallPanel>
         <div
           className="flex h-10 w-12 items-center justify-center transition hover:bg-accent"
           onClick={() => handleAction("MINIMISE")}

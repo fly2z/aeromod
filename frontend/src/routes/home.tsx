@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { GetAllMods } from "@wailsjs/go/main/App";
 import { installMod } from "@/lib/install";
+import { QUERY_KEYS } from "@/constants";
 
 import {
   DropdownMenu,
@@ -30,13 +31,13 @@ export default function HomePage() {
     data: mods,
     refetch,
   } = useQuery({
-    queryKey: ["getAllMods"],
+    queryKey: [QUERY_KEYS.getAllMods],
     queryFn: () => GetAllMods(),
     retry: false,
   });
 
   const installMutation = useMutation({
-    mutationFn: installMod,
+    mutationFn: () => installMod(),
     onSuccess: () => refetch(),
   });
 

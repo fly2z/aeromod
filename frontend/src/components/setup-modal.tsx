@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ArrowLeft, CheckCircle2, FolderOpen } from "lucide-react";
 import {
   CompleteSetup,
   FindSimCommunityFolder,
   OpenDirectoryDialog,
 } from "@wailsjs/go/main/App";
-import { ArrowLeft, CheckCircle2, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function SetupDialog() {

@@ -50,8 +50,8 @@ const queryClient = new QueryClient();
 root.render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="aeromod-theme">
-      <AppBar />
       <QueryClientProvider client={queryClient}>
+        <AppBar />
         <SettingsProvider>
           <TooltipProvider>
             <RouterProvider router={router} />

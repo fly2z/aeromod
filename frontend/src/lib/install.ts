@@ -1,9 +1,9 @@
 import { toast } from "sonner";
 import { InstallMod } from "@wailsjs/go/main/App";
 
-export async function installMod() {
+export async function installMod(path?: string) {
   try {
-    const installed = await InstallMod();
+    const installed = await InstallMod(path || "");
     if (!installed) return;
 
     toast.success("Mod installed successfully!");

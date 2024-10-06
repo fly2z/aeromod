@@ -39,9 +39,13 @@ AeroMod is a tool designed to efficiently manage Microsoft Flight Simulator mods
 
 ![](./.github/screenshot-02.png)
 
-### Settings
+### Install Mods
 
 ![](./.github/screenshot-03.png)
+
+### Settings
+
+![](./.github/screenshot-04.png)
 
 ## Features
 
