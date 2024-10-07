@@ -6,10 +6,10 @@ import {
   WindowToggleMaximise,
   Quit,
 } from "@wailsjs/runtime";
+import InstallPanel from "@/components/install-panel";
 import appIcon from "@/assets/images/icon.png";
 import maximizeIconLight from "@/assets/icons/maximize-light.png";
 import maximizeIconDark from "@/assets/icons/maximize-dark.png";
-import InstallPanel from "./install-panel";
 
 export default function AppBar() {
   const [isMaximised, setIsMaximised] = useState<boolean>();

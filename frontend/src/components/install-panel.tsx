@@ -20,7 +20,9 @@ export default function InstallPanel({ children }: InstallPanelProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: installMod,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.getAllMods] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.getAllMods, QUERY_KEYS.getModNames],
+      });
     },
   });
 
@@ -36,7 +38,7 @@ export default function InstallPanel({ children }: InstallPanelProps) {
     };
   }, []);
 
-  const preventDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const preventDoubleClick = (e: React.MouseEvent) => {
     if (e.detail === 2) {
       e.stopPropagation();
     }
@@ -44,7 +46,9 @@ export default function InstallPanel({ children }: InstallPanelProps) {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverTrigger onClick={preventDoubleClick} asChild>
+        {children}
+      </PopoverTrigger>
       <PopoverContent
         onClick={preventDoubleClick}
         className="flex w-[400px] flex-col gap-y-4"
