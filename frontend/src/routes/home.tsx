@@ -48,15 +48,22 @@ export default function HomePage() {
     [mods]
   );
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<
+    "enabled" | "disabled" | null
+  >(null);
 
   const filteredMods = useMemo(
     () =>
       mods?.filter(
-        ({ name, type }) =>
+        ({ name, type, enabled }) =>
           name.toLowerCase().trim().includes(search.toLowerCase().trim()) &&
-          (selectedTypes.length === 0 || selectedTypes.includes(type))
+          (selectedTypes.length === 0 || selectedTypes.includes(type)) &&
+          (selectedStatus === null ||
+            (enabled
+              ? selectedStatus === "enabled"
+              : selectedStatus === "disabled"))
       ),
-    [mods, search, selectedTypes]
+    [mods, search, selectedTypes, selectedStatus]
   );
 
   if (error) {
@@ -105,11 +112,11 @@ export default function HomePage() {
         </div>
       </div>
       {!isPending && (
-        <div>
+        <div className="flex items-center gap-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                <ChevronDown className="mr-2 size-4 text-muted-foreground" />{" "}
+                <ChevronDown className="mr-2 size-4 text-muted-foreground" />
                 Filter by Type
               </Button>
             </DropdownMenuTrigger>
@@ -133,6 +140,42 @@ export default function HomePage() {
                   {t}
                 </DropdownMenuCheckboxItem>
               ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <ChevronDown className="mr-2 size-4 text-muted-foreground" />
+                Filter by Status
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel>Mod Status</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem
+                checked={selectedStatus === "enabled"}
+                onCheckedChange={(c) => {
+                  if (c) {
+                    setSelectedStatus("enabled");
+                  } else {
+                    setSelectedStatus(null);
+                  }
+                }}
+              >
+                Enabled
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={selectedStatus === "disabled"}
+                onCheckedChange={(c) => {
+                  if (c) {
+                    setSelectedStatus("disabled");
+                  } else {
+                    setSelectedStatus(null);
+                  }
+                }}
+              >
+                Disabled
+              </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
