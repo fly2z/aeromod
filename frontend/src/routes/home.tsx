@@ -15,8 +15,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -115,14 +113,12 @@ export default function HomePage() {
         <div className="flex items-center gap-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <ChevronDown className="mr-2 size-4 text-muted-foreground" />
+              <Button variant="ghost" className="gap-x-2">
                 Filter by Type
+                <ChevronDown className="size-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Mod Type</DropdownMenuLabel>
-              <DropdownMenuSeparator />
               {contentTypes.map((t) => (
                 <DropdownMenuCheckboxItem
                   key={t}
@@ -144,14 +140,12 @@ export default function HomePage() {
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <ChevronDown className="mr-2 size-4 text-muted-foreground" />
+              <Button variant="ghost" className="gap-x-2">
                 Filter by Status
+                <ChevronDown className="size-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Mod Status</DropdownMenuLabel>
-              <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem
                 checked={selectedStatus === "enabled"}
                 onCheckedChange={(c) => {
